@@ -194,7 +194,3 @@ void print_nfa(nfa n)
     }
 }
 
-int main()
-{
-    return 0;
-}
