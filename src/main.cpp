@@ -480,6 +480,98 @@ dfa nfa_to_dfa(nfa_wo_E nfa)
     return result;
 }
 
+string in_to_post(string seq)
+{
+    string post = "";
+    int n = seq.size();
+    stack<char> st;
+    for (int i = 0; i < n; i++)
+    {
+        if (seq[i] == '(')
+        {
+            st.push('(');
+        }
+        else if (seq[i] == ')')
+        {
+            while (st.top() != '(')
+            {
+                post += st.top();
+                st.pop();
+            }
+            st.pop();
+        }
+        else
+        {
+            st.push(seq[i]);
+        }
+    }
+    return post;
+}
+
+string dotAdder(string s)
+{
+    for (int i = 0; i < s.size(); i++)
+    {
+        if (i != s.size() - 1 and s[i] == ')' and s[i + 1] == '(')
+        {
+            s.insert(i + 1, ".");
+            i++;
+
+            int left = i - 1, right = i + 1,
+                countleft = 0, countright = 0;
+
+            while (left >= 0)
+            {
+                if (s[left] == ')')
+                    countleft++;
+                else if (s[left] == '(')
+                    countleft--;
+
+                if (countleft == 0)
+                {
+                    s.insert(left, "(");
+                    break;
+                }
+                left--;
+            }
+
+            right += 1;
+
+            while (right < s.size())
+            {
+                if (s[right] == '(')
+                    countright++;
+                else if (s[right] == ')')
+                    countright--;
+
+                if (countright == 0)
+                {
+                    s.insert(right, ")");
+                    break;
+                }
+                right++;
+            }
+        }
+    }
+
+    return s;
+}
+
+vector<dfa> regex_to_dfa(vector<string> regex)
+{
+    // vector<nfa_wo_E> NFA;
+    vector<dfa> DFA;
+    for (auto r : regex)
+    {
+        string wdot = dotAdder(r);
+        string seq = in_to_post(wdot);
+        nfa n = build_nfa(seq);
+        nfa_wo_E nfawo = nfaE2nfa(n);
+        DFA.push_back(nfa_to_dfa(nfawo));
+    }
+    return DFA;
+}
+
 int main()
 {
     ifstream myfile("input.txt");
@@ -499,9 +591,60 @@ int main()
     }
     myfile.close();
     regex_array.pop_back();
-    cout << input_string << endl;
-    for (auto it : regex_array)
+    vector<dfa> regex_dfas = regex_to_dfa(regex_array);
+
+    vector<pair<string, int>> ans;
+
+    int start = 0;
+    for (int i = start; i < input_string.size();)
     {
-        cout << it << endl;
+        int maxLen = -1e7;
+        int maxIndex = 0;
+        string t = "";
+        for (int k = 0; k < regex_dfas.size(); k++)
+        {
+            vector<int> curr = regex_dfas[k].start_state;
+            for (int j = i; j < input_string.size(); j++)
+            {
+
+                curr = regex_dfas[k].dfa[curr][input_string[j] - 'a'];
+                for (auto f : regex_dfas[k].final_states)
+                {
+                    if (curr == f)
+                    {
+                        int len = j - i + 1;
+                        if (len > maxLen)
+                        {
+                            maxIndex = k + 1;
+                        }
+                    }
+                }
+            }
+        }
+        // cout<<"hi"<<endl;
+
+        if (maxLen == -1e7)
+        {
+            string c = "";
+            c += input_string[i];
+            ans.push_back(make_pair(c, 0));
+            i++;
+        }
+        else
+        {
+            t = input_string.substr(i, maxLen - i + 1);
+            ans.push_back({t, maxIndex});
+            i += maxLen;
+        }
     }
+
+    for (auto p : ans)
+    {
+        cout << "( " << p.first << "," << p.second << " )" << endl;
+    }
+
+    // for (auto i : regex_array)
+    // {
+    //     cout << dotAdder(i) << ",";
+    // }
 }
