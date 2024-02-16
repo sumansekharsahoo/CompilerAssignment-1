@@ -480,6 +480,40 @@ dfa nfa_to_dfa(nfa_wo_E nfa)
     return result;
 }
 
+void print_dfa(dfa mydfa)
+{
+    for (auto it : mydfa.dfa)
+    {
+        cout << "{";
+        for (auto nums : it.first)
+        {
+            cout << nums << ",";
+        }
+        cout << "} -> {";
+        for (auto nums : it.second[0])
+        {
+            cout << nums << ",";
+        }
+        cout << "} - {";
+        for (auto nums : it.second[1])
+        {
+            cout << nums << ",";
+        }
+        cout << "}" << endl;
+    }
+    cout << "final states: " << endl;
+    for (auto it : mydfa.final_states)
+    {
+        cout << "{";
+        for (auto nums : it)
+        {
+            cout << nums << ",";
+        }
+        cout << "}, ";
+    }
+    cout << endl;
+}
+
 string in_to_post(string seq)
 {
     string post = "";
@@ -592,6 +626,8 @@ int main()
     myfile.close();
     regex_array.pop_back();
     vector<dfa> regex_dfas = regex_to_dfa(regex_array);
+    // print_dfa(regex_dfas[1]);
+    // cout << regex_dfas[1].start_state[0];
 
     vector<pair<string, int>> ans;
 
@@ -642,9 +678,4 @@ int main()
     {
         cout << "( " << p.first << "," << p.second << " )" << endl;
     }
-
-    // for (auto i : regex_array)
-    // {
-    //     cout << dotAdder(i) << ",";
-    // }
 }
