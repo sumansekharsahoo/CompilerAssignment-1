@@ -652,6 +652,10 @@ int main()
                         if (len > maxLen)
                         {
                             maxIndex = k + 1;
+                            maxLen = len;
+                            // cout << "Rule" << k + 1 << " Max:  " << maxLen << endl;
+
+                            // cout << "Token:" << t << endl;
                         }
                     }
                 }
@@ -668,14 +672,15 @@ int main()
         }
         else
         {
-            t = input_string.substr(i, maxLen - i + 1);
+            t = input_string.substr(i, maxLen);
             ans.push_back({t, maxIndex});
             i += maxLen;
+            // cout << "i" << i;
         }
     }
 
     for (auto p : ans)
     {
-        cout << "( " << p.first << "," << p.second << " )" << endl;
+        cout << "< " << p.first << "," << p.second << " >" << endl;
     }
 }
