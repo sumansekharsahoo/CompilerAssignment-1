@@ -21,7 +21,7 @@ typedef struct DFA_t
     vector<int> start_state;
     map<vector<int>, vector<vector<int>>> dfa;
     set<vector<int>> final_states;
-} dfa;
+} dfa_t;
 
 nfa character(char c)
 {
@@ -367,9 +367,9 @@ nfa_wo_E nfaE2nfa(nfa n)
     return nfa_wo_e;
 }
 
-dfa nfa_to_dfa(nfa_wo_E nfa)
+dfa_t nfa_to_dfa(nfa_wo_E nfa)
 {
-    dfa result;
+    dfa_t result;
     unordered_set<int> fstates;
     unordered_map<int, vector<vector<int>>> transition;
     for (auto it : nfa.fin)
@@ -532,9 +532,9 @@ string dotAdder(string s)
     return s;
 }
 
-vector<dfa> regex_to_dfa(vector<string> regex)
+vector<dfa_t> regex_to_dfa(vector<string> regex)
 {
-    vector<dfa> DFA;
+    vector<dfa_t> DFA;
     for (auto r : regex)
     {
         string wdot = dotAdder(r);
@@ -565,7 +565,7 @@ int main()
     }
     myfile.close();
     regex_array.pop_back();
-    vector<dfa> regex_dfas = regex_to_dfa(regex_array);
+    vector<dfa_t> regex_dfas = regex_to_dfa(regex_array);
     vector<pair<string, int>> ans;
 
     int start = 0;
