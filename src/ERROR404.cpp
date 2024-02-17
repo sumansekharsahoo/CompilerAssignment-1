@@ -581,16 +581,13 @@ int main()
             {
 
                 curr = regex_dfas[k].dfa[curr][input_string[j] - 'a'];
-                for (auto f : regex_dfas[k].final_states)
+                if (regex_dfas[k].final_states.find(curr) != regex_dfas[k].final_states.end())
                 {
-                    if (curr == f)
+                    int len = j - i + 1;
+                    if (len > maxLen)
                     {
-                        int len = j - i + 1;
-                        if (len > maxLen)
-                        {
-                            maxIndex = k + 1;
-                            maxLen = len;
-                        }
+                        maxIndex = k + 1;
+                        maxLen = len;
                     }
                 }
             }
@@ -611,10 +608,6 @@ int main()
         }
     }
 
-    // for (auto p : ans)
-    // {
-    //     cout << "< " << p.first << "," << p.second << " > " << endl;
-    // }
     ofstream outfile;
     outfile.open("output.txt");
     for (auto p : ans)
